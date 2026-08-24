@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
@@ -33,6 +34,13 @@ Route::middleware(['auth', 'role:instructor'])->prefix('instructor')->name('inst
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/catalog', function () {
+        return view('student.catalog');
+    })->name('catalog');
+    Route::get('/courses/{course}', function ($course) {
+        return view('student.course-show', ['courseId' => $course]);
+    })->name('course.show');
+    Route::post('/payment/confirm/{enrollmentId}', [PaymentController::class, 'confirm'])->name('payment.confirm');
 });
 
 Route::middleware('auth')->group(function () {

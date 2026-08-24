@@ -33,6 +33,41 @@
                 {{ $slot }}
             </main>
         </div>
+
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('open-snap', (event) => {
+            snap.pay(event.token, {
+                onSuccess: function(result) {
+                    confirmPayment(event.enrollmentId);
+                },
+                onPending: function(result) {
+                    confirmPayment(event.enrollmentId);
+                },
+                onError: function(result) {
+                    alert('Pembayaran gagal, coba lagi.');
+                },
+                onClose: function() {
+                    alert('Kamu menutup popup sebelum menyelesaikan pembayaran.');
+                }
+            });
+        });
+    });
+
+    function confirmPayment(enrollmentId) {
+    fetch(`/student/payment/confirm/${enrollmentId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+    }).then(() => {
+        window.location.reload();
+    });
+}
+</script>
         @livewireScripts
     </body>
 </html>
