@@ -3,6 +3,7 @@
 use App\Models\Quiz;
 use App\Models\Question;
 use App\Models\Option;
+use App\Services\GeminiQuizService;
 use Livewire\Component;
 
 new class extends Component {
@@ -11,6 +12,10 @@ new class extends Component {
     public $options = ['', '', '', ''];
     public $correctIndex = 0;
     public $editingId = null;
+
+    public $aiCount = 5;
+    public $isGenerating = false;
+    public $aiError = null;
 
     public function mount($quizId)
     {
@@ -22,6 +27,48 @@ new class extends Component {
     public function questions()
     {
         return $this->quiz->questions()->with('options')->orderBy('order')->get();
+    }
+
+    public function generateWithAI()
+    {
+        $this->aiError = null;
+        $this->isGenerating = true;
+
+        try {
+            $materialText = $this->quiz->course->lessons
+                ->pluck('content')
+                ->filter()
+                ->implode("\n\n");
+
+            if (empty(trim($materialText))) {
+                throw new \Exception('Course ini belum punya materi lesson (teks) yang bisa dipakai untuk generate soal.');
+            }
+
+            $service = new GeminiQuizService();
+            $generated = $service->generateQuestions($materialText, $this->aiCount);
+
+            $order = $this->quiz->questions()->count();
+
+            foreach ($generated as $item) {
+                $question = Question::create([
+                    'quiz_id' => $this->quiz->id,
+                    'question_text' => $item['question'],
+                    'order' => $order++,
+                ]);
+
+                foreach ($item['options'] as $i => $optionText) {
+                    Option::create([
+                        'question_id' => $question->id,
+                        'option_text' => $optionText,
+                        'is_correct' => $i == $item['correct_index'],
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            $this->aiError = $e->getMessage();
+        }
+
+        $this->isGenerating = false;
     }
 
     public function save()
@@ -76,6 +123,24 @@ new class extends Component {
     <a href="{{ route('instructor.courses.quizzes', $quiz->course_id) }}" class="text-sm text-blue-600">&larr; Kembali ke daftar quiz</a>
 
     <h2 class="text-xl font-bold">Soal untuk: {{ $quiz->title }}</h2>
+
+    <div class="bg-purple-50 border border-purple-200 p-4 rounded space-y-3">
+    <h3 class="font-semibold text-purple-800">✨ Generate Soal Otomatis dengan AI</h3>
+    <p class="text-sm text-gray-600">Soal akan dibuat otomatis berdasarkan materi (teks) lesson yang ada di course ini.</p>
+
+    <div class="flex items-center gap-2">
+        <label class="text-sm">Jumlah soal:</label>
+        <input type="number" wire:model="aiCount" min="1" max="10" class="border rounded p-1 w-20">
+        <button wire:click="generateWithAI" wire:loading.attr="disabled" class="bg-purple-600 text-white px-4 py-2 rounded">
+            <span wire:loading.remove wire:target="generateWithAI">Generate Soal</span>
+            <span wire:loading wire:target="generateWithAI">Sedang membuat soal...</span>
+        </button>
+    </div>
+
+    @if($aiError)
+        <p class="text-red-600 text-sm">{{ $aiError }}</p>
+    @endif
+</div>
 
     <form wire:submit="save" class="space-y-4 bg-white p-4 rounded shadow">
         <div>

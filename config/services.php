@@ -41,4 +41,8 @@ return [
     'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
     ],
 
+    'gemini' => [
+    'api_key' => env('GEMINI_API_KEY'),
+    ],
+
 ];
