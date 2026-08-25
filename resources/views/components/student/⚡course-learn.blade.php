@@ -19,7 +19,7 @@ new class extends Component {
             abort(403, 'Kamu belum enroll (atau belum bayar) course ini.');
         }
 
-        $this->course = Course::with('lessons')->findOrFail($courseId);
+        $this->course = Course::with(['lessons', 'quizzes'])->findOrFail($courseId);
         $this->activeLesson = $this->course->lessons->first()?->id;
     }
 
@@ -101,4 +101,13 @@ new class extends Component {
             @endif
         </div>
     </div>
+     @if($course->quizzes->count() > 0)
+        <div class="mt-4">
+            @foreach($course->quizzes as $quiz)
+                <a href="{{ route('student.quiz.take', $quiz->id) }}" class="inline-block bg-purple-600 text-white px-4 py-2 rounded">
+                    Kerjakan: {{ $quiz->title }}
+                </a>
+            @endforeach
+        </div>
+    @endif
 </div>

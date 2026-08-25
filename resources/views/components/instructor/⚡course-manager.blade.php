@@ -111,6 +111,7 @@ new class extends Component {
                         </td>
                         <td class="p-2 space-x-2">
                             <a href="{{ route('instructor.lessons', $course->id) }}" class="text-purple-600">Kelola Lesson</a>
+                            <a href="{{ route('instructor.courses.quizzes', $course->id) }}" class="text-green-600">Kelola Quiz</a>
                             <button wire:click="edit({{ $course->id }})" class="text-blue-600">Edit</button>
                             <button wire:click="delete({{ $course->id }})" wire:confirm="Yakin mau hapus course ini?" class="text-red-600">Hapus</button>
                         </td>

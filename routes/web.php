@@ -30,6 +30,12 @@ Route::middleware(['auth', 'role:instructor'])->prefix('instructor')->name('inst
     Route::get('/courses/{course}/lessons', function ($course) {
         return view('instructor.lessons', ['courseId' => $course]);
     })->name('lessons');
+    Route::get('/courses/{course}/quizzes', function ($course) {
+        return view('instructor.quizzes', ['courseId' => $course]);
+    })->name('courses.quizzes');
+    Route::get('/quizzes/{quiz}/questions', function ($quiz) {
+        return view('instructor.questions', ['quizId' => $quiz]);
+    })->name('quiz.questions');
     });
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
@@ -41,6 +47,9 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
         return view('student.course-show', ['courseId' => $course]);
     })->name('course.show');
     Route::post('/payment/confirm/{enrollmentId}', [PaymentController::class, 'confirm'])->name('payment.confirm');
+    Route::get('/quizzes/{quiz}', function ($quiz) {
+        return view('student.quiz-take', ['quizId' => $quiz]);
+    })->name('quiz.take');
 });
 
 Route::middleware('auth')->group(function () {
