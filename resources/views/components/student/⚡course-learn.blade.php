@@ -110,4 +110,9 @@ new class extends Component {
             @endforeach
         </div>
     @endif
+    <div class="mt-4">
+    <a href="{{ route('student.certificate.download', $course->id) }}" class="inline-block bg-[#F2B705] text-[#17233F] px-4 py-2 rounded font-semibold hover:bg-[#17233F] hover:text-white transition-colors">
+        🎓 Download Sertifikat
+    </a>
+</div>
 </div>

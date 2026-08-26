@@ -50,6 +50,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::get('/quizzes/{quiz}', function ($quiz) {
         return view('student.quiz-take', ['quizId' => $quiz]);
     })->name('quiz.take');
+    Route::get('/certificate/{course}', [\App\Http\Controllers\CertificateController::class, 'download'])->name('certificate.download');
 });
 
 Route::middleware('auth')->group(function () {
