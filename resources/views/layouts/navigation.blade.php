@@ -28,6 +28,17 @@
                                 {{ request()->routeIs('student.catalog') ? 'border-[#F2B705] text-[#17233F]' : 'border-transparent text-[#4B5566] hover:text-[#17233F] hover:border-[#E4DFD2]' }}">
                                 Katalog Course
                             </a>
+                        @elseif(auth()->user()->role === 'admin')
+    <a href="{{ route('admin.users') }}"
+        class="inline-flex items-center px-3 py-2 text-sm font-medium border-b-2 transition-colors
+        {{ request()->routeIs('admin.users') ? 'border-[#F2B705] text-[#17233F]' : 'border-transparent text-[#4B5566] hover:text-[#17233F] hover:border-[#E4DFD2]' }}">
+        Kelola User
+    </a>
+    <a href="{{ route('admin.transactions') }}"
+        class="inline-flex items-center px-3 py-2 text-sm font-medium border-b-2 transition-colors
+        {{ request()->routeIs('admin.transactions') ? 'border-[#F2B705] text-[#17233F]' : 'border-transparent text-[#4B5566] hover:text-[#17233F] hover:border-[#E4DFD2]' }}">
+        Transaksi
+    </a>
                         @endif
                     @endauth
                 </div>
@@ -99,7 +110,18 @@
                         {{ request()->routeIs('student.catalog') ? 'border-[#F2B705] text-[#17233F] bg-[#FFFDF9]' : 'border-transparent text-[#4B5566]' }}">
                         Katalog Course
                     </a>
-                @endif
+               @elseif(auth()->user()->role === 'admin')
+    <a href="{{ route('admin.users') }}"
+        class="block ps-3 pe-4 py-2 text-sm font-medium border-l-4
+        {{ request()->routeIs('admin.users') ? 'border-[#F2B705] text-[#17233F] bg-[#FFFDF9]' : 'border-transparent text-[#4B5566]' }}">
+        Kelola User
+    </a>
+    <a href="{{ route('admin.transactions') }}"
+        class="block ps-3 pe-4 py-2 text-sm font-medium border-l-4
+        {{ request()->routeIs('admin.transactions') ? 'border-[#F2B705] text-[#17233F] bg-[#FFFDF9]' : 'border-transparent text-[#4B5566]' }}">
+        Transaksi
+    </a>
+@endif
             @endauth
         </div>
 

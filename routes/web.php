@@ -20,6 +20,12 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // Dashboard khusus per role, dilindungi middleware 'role'
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/users', function () {
+        return view('admin.users');
+    })->name('users');
+    Route::get('/transactions', function () {
+        return view('admin.transactions');
+    })->name('transactions');
 });
 
 Route::middleware(['auth', 'role:instructor'])->prefix('instructor')->name('instructor.')->group(function () {
